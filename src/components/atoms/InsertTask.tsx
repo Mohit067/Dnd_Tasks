@@ -1,15 +1,29 @@
 import { Button, Flex, Input, Text } from "@chakra-ui/react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 interface InsertTaskProps {
     onAddTask: (title: string, section: string, id: string) => void;
 }
+
+
+
 
 export const InsertTask: React.FC<InsertTaskProps> = ({
     onAddTask
 }) => {
 
     const [title, setTitle] = useState<string>("");
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const handleAddTask = () =>{
+        if(title.trim() === ""){
+            setTitle("");
+            return;
+        }
+        onAddTask(title, "Todo", crypto.randomUUID());
+        setTitle("");
+        inputRef.current?.blur()
+    }
 
     return (
         <Flex
@@ -32,6 +46,7 @@ export const InsertTask: React.FC<InsertTaskProps> = ({
             </Text>
 
             <Input 
+            ref={inputRef}
                 placeholder="Task title"
                 backgroundColor="white"
                 color={"gray.800"}
@@ -46,10 +61,7 @@ export const InsertTask: React.FC<InsertTaskProps> = ({
                 backgroundColor={"green.400"}
                 color={"white"}
                 marginLeft={4}
-                onClick={() =>{
-                    onAddTask(title, "Todo", Math.random().toString());
-                    setTitle("");
-                }}
+                onClick={handleAddTask}
                 
             >
                 Add Task
